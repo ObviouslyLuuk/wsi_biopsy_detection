@@ -1,5 +1,6 @@
 from xml.etree import ElementTree as ET
 from xml.dom import minidom
+import numpy as np
 
 class AnnotationType:
     RECTANGLE = 'Rectangle'
