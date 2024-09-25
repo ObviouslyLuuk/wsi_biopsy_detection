@@ -11,6 +11,7 @@ class AnnotationGroup:
     OVER_EXPRESSION = 'OverExpression'
     NULL_MUTATION = 'NullMutation'
     DOUBLE_CLONES = 'DoubleClones'
+    NO_CONSENSUS = 'NoConsensus'
     EXCLUDE = 'exclude'
 
 DEFAULT_COLOR = "#F4FA58"
@@ -136,7 +137,8 @@ def get_xml_template_dict():
         }
     }
     for group, color in zip([AnnotationGroup.WILD_TYPE, AnnotationGroup.OVER_EXPRESSION, AnnotationGroup.NULL_MUTATION, 
-                             AnnotationGroup.DOUBLE_CLONES, AnnotationGroup.EXCLUDE], ['#64fe2e', '#aaaa00', '#0000ff', '#ff0000', '#000000']):
+                             AnnotationGroup.DOUBLE_CLONES, AnnotationGroup.NO_CONSENSUS, AnnotationGroup.EXCLUDE], 
+                             ['#64fe2e', '#aaaa00', '#0000ff', '#ff0000', DEFAULT_COLOR, '#000000']):
         xml_template_dict['ASAP_Annotations']['children'][1]['AnnotationGroups']['children'].append({
             'Group': {'attrib': {'Name': group, 'PartOfGroup': 'None', 'Color': color}, 'children': 
                       [{'Attibutes': {}}]
@@ -145,7 +147,7 @@ def get_xml_template_dict():
     return xml_template_dict
 
 
-def get_annotation_dict(contour, annotation_type=AnnotationType.POLYGON, annotation_group="None", color=DEFAULT_COLOR):
+def get_annotation_dict(contour, annotation_type=AnnotationType.POLYGON, annotation_group="None", color=DEFAULT_COLOR, name=None):
     """
     Returns an annotation dictionary for a contour.
 
@@ -164,8 +166,10 @@ def get_annotation_dict(contour, annotation_type=AnnotationType.POLYGON, annotat
             Annotation dictionary
     """
     center = np.mean(contour, axis=0).astype(np.int32)
+    if name is None:
+        name = f'x{center[0]}y{center[1]}'
     annotation_dict = {'attrib': {
-            'Name': f'x{center[0]}y{center[1]}',
+            'Name': name,
             'Type': annotation_type,
             'PartOfGroup': annotation_group,
             'Color': color,
